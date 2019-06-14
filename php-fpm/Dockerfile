@@ -645,6 +645,36 @@ RUN if [ ${INSTALL_YAML} = true ]; then \
     docker-php-ext-enable yaml \
 ;fi
 
+# Instalar extensão PHP - Cassandra
+
+USER root
+RUN apt-get update -yqq
+RUN apt-get install -y software-properties-common
+#RUN add-apt-repository ppa:ondrej/php && \
+RUN    apt-get update && \
+    apt-get install -y wget && \
+    apt-get install -y build-essential cmake git libpcre3-dev && \
+    apt-get install -y libgmp-dev
+
+RUN wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u11_amd64.deb
+
+RUN dpkg -i libssl1.0.0_1.0.1t-1+deb8u11_amd64.deb
+
+RUN wget http://downloads.datastax.com/cpp-driver/ubuntu/14.04/dependencies/libuv/v1.16.1/libuv_1.16.1-1_amd64.deb && \
+    wget http://downloads.datastax.com/cpp-driver/ubuntu/14.04/dependencies/libuv/v1.16.1/libuv-dev_1.16.1-1_amd64.deb && \
+    wget http://downloads.datastax.com/cpp-driver/ubuntu/14.04/cassandra/v2.8.0/cassandra-cpp-driver_2.8.0-1_amd64.deb && \
+    wget http://downloads.datastax.com/cpp-driver/ubuntu/14.04/cassandra/v2.8.0/cassandra-cpp-driver-dev_2.8.0-1_amd64.deb
+
+RUN dpkg -i --force-overwrite libuv_1.16.1-1_amd64.deb && \
+    dpkg -i --force-overwrite libuv-dev_1.16.1-1_amd64.deb && \
+    dpkg -i cassandra-cpp-driver_2.8.0-1_amd64.deb && \
+    dpkg -i cassandra-cpp-driver-dev_2.8.0-1_amd64.deb
+
+RUN pecl install cassandra
+
+# Habilitar extensão PHP - Cassandra
+RUN echo "extension=cassandra.so" >> $PHP_INI_DIR/conf.d/cassandra.ini
+
 ###########################################################################
 # RDKAFKA:
 ###########################################################################

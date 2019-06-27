@@ -147,6 +147,10 @@ RUN if [ ${INSTALL_PG_CLIENT} = true ]; then \
 
 ARG INSTALL_XDEBUG=false
 
+RUN docker-php-ext-install gettext
+RUN apt-get install -y locales locales-all
+RUN docker-php-ext-enable gettext
+
 RUN if [ ${INSTALL_XDEBUG} = true ]; then \
   # Install the xdebug extension
   if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \

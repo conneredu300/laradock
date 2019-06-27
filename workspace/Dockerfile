@@ -326,7 +326,7 @@ RUN dpkg -i --force-overwrite libuv_1.16.1-1_amd64.deb && \
 RUN pecl install cassandra
 
 # Habilitar extensão PHP - Cassandra
-RUN echo "extension=cassandra.so" >> $PHP_INI_DIR/conf.d/cassandra.ini
+RUN echo "extension=cassandra.so" >> etc/php/7.1/cli/conf.d/cassandra.ini
 
 ###########################################################################
 # xDebug:
@@ -338,6 +338,7 @@ ARG INSTALL_XDEBUG=false
 
 RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     # Load the xdebug extension only with phpunit commands
+    apt-get -f install -y &&\
     apt-get install -y php${LARADOCK_PHP_VERSION}-xdebug && \
     sed -i 's/^;//g' /etc/php/${LARADOCK_PHP_VERSION}/cli/conf.d/20-xdebug.ini && \
     echo "alias phpunit='php -dzend_extension=xdebug.so /var/www/vendor/bin/phpunit'" >> ~/.bashrc \
